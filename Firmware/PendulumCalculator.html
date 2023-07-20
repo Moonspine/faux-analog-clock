@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html>
+	<div style="display: grid; grid-template-columns: 100px 100px; grid-row-gap: 10px;">
+		Steps:
+		<input id="stepsInput" type="number" min="1" max="1000" value="1000"></input>
+		Resolution:
+		<input id="resolutionInput" type="number" min="2" max="255" value="12"></input>
+		<div></div>
+		<button id="generateButton">Generate</button>
+	</div>
+	<br />
+	<textarea id="outputText" rows="20" cols="100"></textarea>
+	
+	<script>
+		const stepsInput = document.getElementById("stepsInput");
+		const resolutionInput = document.getElementById("resolutionInput");
+		const generateButton = document.getElementById("generateButton");
+		const outputText = document.getElementById("outputText");
+		
+		generateButton.onclick = function() {
+			const steps = Math.min(Math.max(Number(stepsInput.value), 1), 1000);
+			const resolution = Math.min(Math.max(Number(resolutionInput.value), 2), 255);
+			
+			let result = "const PROGMEM uint8_t PENDULUM_LED_INDEX[] = {\n  ";
+			
+			for (let i = 0; i < steps; ++i) {
+				if (i > 0) {
+					result += ",";
+					if (i % 16 == 0) {
+						result += "\n  ";
+					} else {
+						result += " ";
+					}
+				}
+				
+				const t = i / steps;
+				const theta = 2 * Math.PI * (t - 0.25);
+				const value = Math.round((resolution - 1) * (1.0 - (Math.cos(theta) + 1.0) / 2));
+				
+				result += value;
+			}
+			result += "\n};";
+			outputText.value = result;
+		};
+	</script>
+</html>
