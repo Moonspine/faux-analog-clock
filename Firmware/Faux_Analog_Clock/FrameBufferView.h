@@ -29,21 +29,30 @@ public:
   void setAllValues(uint8_t value);
 
   /**
+   * Sets the values in the buffer as a binary display for the given value
+   * 
+   * @param bitValue The value to display (decomposed into bits)
+   * @param bitCount The number of bits to display (between 1 and 8, inclusive)
+   * @param valuesPerBit The number of buffer values to set for each bit (between 1 and (this->count / bitCount), inclusive)
+   * @param setZeroes If true, zeroes are set (false for better fade effects)
+   * @param intensity The intensity of the display (the value to set for each frame buffer element)
+   */
+  void setValuesBinaryDisplay(uint8_t bitValue, uint8_t bitCount, uint8_t valuesPerBit, bool setZeroes, uint8_t intensity);
+
+  /**
    * Sets this buffer up to be fadeable by calling the updateFade() method
    * 
+   * @param microsecondsPerFadeTick The number of microseconds it takes to fade the vlaues by 1
    * @param targetFadeValue The value to which this buffer will fade all elements
-   * @param fadeRate The value added to / subtracted from elements on each fade tick
-   * @param fadeTickDelay The delay between fade ticks, in number of calls to updateFade()
    */
-  void initializeFade(uint8_t fadeRate, uint16_t fadeTickDelay, uint8_t targetFadeValue);
+  void initializeFade(uint32_t microsecondsPerFadeTick, uint8_t targetFadeValue);
   
   /**
    * Sets this buffer up to be fadeable by calling the updateFade() method
    * 
-   * @param fadeRate The value added to / subtracted from elements on each fade tick
-   * @param fadeTickDelay The delay between fade ticks, in number of calls to updateFade()
+   * @param microsecondsPerFadeTick The number of microseconds it takes to fade the vlaues by 1
    */
-  void initializeFade(uint8_t fadeRate, uint16_t fadeTickDelay);
+  void initializeFade(uint32_t microsecondsPerFadeTick);
 
   /**
    * Updates the fade target without resetting any internal fade timers
@@ -66,12 +75,12 @@ private:
   uint8_t *frameBuffer;
   uint8_t count;
 
+  uint32_t microsecondsPerFadeTick;
   uint8_t targetFadeValue;
-  uint8_t fadeRate;
-  uint16_t fadeTickDelay;
   
-  uint16_t remainingFadeTickDelay;
   bool isFadeActive;
+  bool lastFadeActive;
+  uint32_t lastFadeTimestamp;
 };
 
 #endif

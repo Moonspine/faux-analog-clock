@@ -13,6 +13,7 @@
  *   "Fd" = Fade effects
  *   "br" = Brightness
  *   "nb" = Night brightness (multiplied by brightness)
+ *   "dY" = Display mode
  *   "UT" = Utilities
  *   
  * Timezone ("Tz") menu:
@@ -35,6 +36,10 @@
  * 
  * Night brightness ("nb") menu:
  *   Clock LED brightness at night (between 6 PM and 6 AM), from "1" (10% of normal brightness) to "10" (100% of normal brightness)
+ *   
+ * Display mode ("dY") menu:
+ *   "An" = Analog display mode (classic analog clock face)
+ *   "bn" = Binary display mode (H/M/S are displayed in binary, using 1/6, 1/6, and 1/4 of the clock face, respectively, in clockwise direction, starting with the LSb)
  * 
  * Utilities ("UT") menu:
  *   "RS" = Reset time using GPS
@@ -49,11 +54,12 @@
  *  Indices (MSNybble):                                      0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1
  *  Indices (LSNybble):                                      0 1 2 3 4 5 6 7 8 9 A B C D E F 0 1 2 3 4 5 6 7 8 9 A
  */
-const PROGMEM char CLOCK_SUBMENU_TEXT[]                   = "TZdSFEFdbrnbUT";
+const PROGMEM char CLOCK_SUBMENU_TEXT[]                   = "TZdSFEFdbrnbdYUT";
 const PROGMEM char CLOCK_SUBMENU_ITEM_TEXT_TIMEZONE[]     = "-C-b-A-9-8-7-6-5-4-3-2-1 0 1 2 3 4 5 6 7 8 9 A b C d E";
 const PROGMEM char CLOCK_SUBMENU_ITEM_TEXT_BOOLEAN[]      = " n Y";
 const PROGMEM char CLOCK_SUBMENU_ITEM_TEXT_FACE_EFFECTS[] = "onouinbo";
 const PROGMEM char CLOCK_SUBMENU_ITEM_TEXT_DECIMAL[]      = " 1 2 3 4 5 6 7 8 910";
+const PROGMEM char CLOCK_SUBMENU_ITEM_TEXT_DISPLAY_MODE[] = "Anbn";
 const PROGMEM char CLOCK_SUBMENU_ITEM_TEXT_UTILITIES[]    = "RSL1L2";
 
 constexpr uint8_t CLOCK_SUBMENU_COUNT = strlen(CLOCK_SUBMENU_TEXT) / 2;
@@ -64,6 +70,7 @@ constexpr uint8_t CLOCK_SUBMENU_LENGTH[CLOCK_SUBMENU_COUNT] = {
   strlen(CLOCK_SUBMENU_ITEM_TEXT_BOOLEAN) / 2,      // Fade Effects
   strlen(CLOCK_SUBMENU_ITEM_TEXT_DECIMAL) / 2,      // Brightness
   strlen(CLOCK_SUBMENU_ITEM_TEXT_DECIMAL) / 2,      // Night Brightness
+  strlen(CLOCK_SUBMENU_ITEM_TEXT_DISPLAY_MODE) / 2, // Display mode
   strlen(CLOCK_SUBMENU_ITEM_TEXT_UTILITIES) / 2     // Utilities
 };
 
@@ -74,6 +81,7 @@ const char * const CLOCK_SUBMENU_ITEM_TEXT[CLOCK_SUBMENU_COUNT] = {
   CLOCK_SUBMENU_ITEM_TEXT_BOOLEAN,
   CLOCK_SUBMENU_ITEM_TEXT_DECIMAL,
   CLOCK_SUBMENU_ITEM_TEXT_DECIMAL,
+  CLOCK_SUBMENU_ITEM_TEXT_DISPLAY_MODE,
   CLOCK_SUBMENU_ITEM_TEXT_UTILITIES
 };
 
@@ -233,7 +241,10 @@ void ClockMenu::handleEnterButtonPress() {
       case 6: // Night brightness
         currentSubMenuIndex = mapBrightnessOption(options.getNightBrightness(), 255, 10);
         break;
-      case 7: // Utilities
+      case 7: // Display mode
+        currentSubMenuIndex = options.getDisplayMode() + 1;
+        break;
+      case 8: // Utilities
         currentSubMenuIndex = 1;
       default: // Invalid option
         break;
@@ -259,7 +270,10 @@ void ClockMenu::handleEnterButtonPress() {
       case 6: // Night brightness
         options.setNightBrightness(mapBrightnessOption(currentSubMenuIndex, 10, 255));
         break;
-      case 7: // Utilities
+      case 7: // Display mode
+        options.setDisplayMode(currentSubMenuIndex - 1);
+        break;
+      case 8: // Utilities
         options.setCurrentUtilityMode(currentSubMenuIndex);
         break;
       default: // Invalid option

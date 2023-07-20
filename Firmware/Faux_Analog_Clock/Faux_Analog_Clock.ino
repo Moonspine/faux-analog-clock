@@ -32,16 +32,11 @@
 /*
  * Animation timing variables (tweak these to tweak the clock fade animations)
  */
-const uint8_t CLOCK_ANIM_SECONDS_FADE_RATE = 4;
-const uint16_t CLOCK_ANIM_SECONDS_FADE_TICK_DELAY = 0;
-const uint8_t CLOCK_ANIM_MINUTES_FADE_RATE = 4;
-const uint16_t CLOCK_ANIM_MINUTES_FADE_TICK_DELAY = 0;
-const uint8_t CLOCK_ANIM_HOURS_FADE_RATE = 2;
-const uint16_t CLOCK_ANIM_HOURS_FADE_TICK_DELAY = 0;
-const uint8_t CLOCK_ANIM_PENDULUM_FADE_RATE = 4;
-const uint16_t CLOCK_ANIM_PENDULUM_FADE_TICK_DELAY = 0;
-const uint8_t CLOCK_ANIM_RING_FADE_RATE = 1;
-const uint16_t CLOCK_ANIM_RING_FADE_TICK_DELAY = 100;
+const uint32_t CLOCK_ANIM_SECONDS_FADE_TIME = 2000;
+const uint32_t CLOCK_ANIM_MINUTES_FADE_TIME = 2000;
+const uint32_t CLOCK_ANIM_HOURS_FADE_TIME = 4000;
+const uint32_t CLOCK_ANIM_PENDULUM_FADE_TIME = 2000;
+const uint32_t CLOCK_ANIM_RING_FADE_TIME = 800000;
 
 /*
  * Menu configuration
@@ -103,20 +98,20 @@ void setup() {
 
   // Initialize timing buffers
   secondBuffer = clockDisplay.newFrameBufferView(CLOCK_SECONDS_OFFSET, 60);
-  secondBuffer->initializeFade(CLOCK_ANIM_SECONDS_FADE_RATE, CLOCK_ANIM_SECONDS_FADE_TICK_DELAY, 0);
+  secondBuffer->initializeFade(CLOCK_ANIM_SECONDS_FADE_TIME, 0);
   minuteBuffer = clockDisplay.newFrameBufferView(CLOCK_MINUTES_OFFSET, 60);
-  minuteBuffer->initializeFade(CLOCK_ANIM_MINUTES_FADE_RATE, CLOCK_ANIM_MINUTES_FADE_TICK_DELAY, 0);
+  minuteBuffer->initializeFade(CLOCK_ANIM_MINUTES_FADE_TIME, 0);
   hourBuffer = clockDisplay.newFrameBufferView(CLOCK_HOURS_OFFSET, 12);
-  hourBuffer->initializeFade(CLOCK_ANIM_HOURS_FADE_RATE, CLOCK_ANIM_HOURS_FADE_TICK_DELAY, 0);
+  hourBuffer->initializeFade(CLOCK_ANIM_HOURS_FADE_TIME, 0);
   pendulumBuffer = clockDisplay.newFrameBufferView(CLOCK_PENDULUM_OFFSET, 12);
-  pendulumBuffer->initializeFade(CLOCK_ANIM_PENDULUM_FADE_RATE, CLOCK_ANIM_PENDULUM_FADE_TICK_DELAY, 0);
+  pendulumBuffer->initializeFade(CLOCK_ANIM_PENDULUM_FADE_TIME, 0);
 
   // Initialize face ring buffers
   faceInnerRingBuffer = clockDisplay.newFrameBufferView(CLOCK_FACE_INNER_OFFSET, 12);
-  faceInnerRingBuffer->initializeFade(CLOCK_ANIM_RING_FADE_RATE, CLOCK_ANIM_RING_FADE_TICK_DELAY, 0);
+  faceInnerRingBuffer->initializeFade(CLOCK_ANIM_RING_FADE_TIME, 0);
   faceInnerRingBuffer->setAllValues(0);
   faceOuterRingBuffer = clockDisplay.newFrameBufferView(CLOCK_FACE_OUTER_OFFSET, 12);
-  faceOuterRingBuffer->initializeFade(CLOCK_ANIM_RING_FADE_RATE, CLOCK_ANIM_RING_FADE_TICK_DELAY, options.getDaytimeBrightness());
+  faceOuterRingBuffer->initializeFade(CLOCK_ANIM_RING_FADE_TIME, options.getDaytimeBrightness());
   faceOuterRingBuffer->setAllValues(options.getDaytimeBrightness());
 
   // Initialize 7-segment display buffers
@@ -166,9 +161,15 @@ void loop() {
     }
 
     // Update time display
-    secondBuffer->setValue(now.second(), brightness);
-    minuteBuffer->setValue(now.minute(), brightness);
-    hourBuffer->setValue(now.hour() % 12, brightness);
+    if (options.getDisplayMode() == CLOCK_DISPLAY_MODE_BINARY) {
+      secondBuffer->setValuesBinaryDisplay(now.second(), 6, 10, false, brightness);
+      minuteBuffer->setValuesBinaryDisplay(now.minute(), 6, 10, false, brightness);
+      hourBuffer->setValuesBinaryDisplay(now.hour() % 12, 4, 3, false, brightness);
+    } else {
+      secondBuffer->setValue(now.second(), brightness);
+      minuteBuffer->setValue(now.minute(), brightness);
+      hourBuffer->setValue(now.hour() % 12, brightness);
+    }
 
     // Update clock ring animation fade targets
     updateClockRingFadeTargets(now.hour(), brightness);
@@ -267,8 +268,8 @@ void updateClockFaceEffectMode(uint8_t brightness) {
       break;
     case FACE_EFFECTS_ON:
     default:
-      faceInnerRingBuffer->initializeFade(CLOCK_ANIM_RING_FADE_RATE, CLOCK_ANIM_RING_FADE_TICK_DELAY);
-      faceOuterRingBuffer->initializeFade(CLOCK_ANIM_RING_FADE_RATE, CLOCK_ANIM_RING_FADE_TICK_DELAY);
+      faceInnerRingBuffer->initializeFade(CLOCK_ANIM_RING_FADE_TIME);
+      faceOuterRingBuffer->initializeFade(CLOCK_ANIM_RING_FADE_TIME);
       updateClockRingFadeTargets(timekeeper.getTime().hour(), brightness);
       faceInnerRingBuffer->accelerateFadeToEnd();
       faceOuterRingBuffer->accelerateFadeToEnd();

@@ -42,6 +42,11 @@ void ClockOptions::setNightBrightness(uint8_t value) {
   changed = true;
 }
 
+void ClockOptions::setDisplayMode(uint8_t mode) {
+  this->displayMode = mode;
+  changed = true;
+}
+
 void ClockOptions::setCurrentUtilityMode(uint8_t mode) {
   this->currentUtilityMode = mode;
   changed = true;
@@ -80,6 +85,10 @@ uint8_t ClockOptions::getPremultipliedNightBrightness() const {
   return premultipliedNightBrightness;
 }
 
+uint8_t ClockOptions::getDisplayMode() const {
+  return displayMode;
+}
+
 bool ClockOptions::getOptionsChanged() {
   bool result = changed;
   changed = false;
@@ -95,6 +104,7 @@ void ClockOptions::saveOptions() {
   EEPROM.put(4, fadeEffectsEnabled);
   EEPROM.put(5, daytimeBrightness);
   EEPROM.put(6, nightBrightness);
+  EEPROM.put(7, displayMode);
 }
 
 
@@ -110,6 +120,7 @@ void ClockOptions::loadOptions() {
     fadeEffectsEnabled = true;
     daytimeBrightness = 255;
     nightBrightness = 128;
+    displayMode = CLOCK_DISPLAY_MODE_ANALOG;
   } else {
     EEPROM.get(1, timezone);
     EEPROM.get(2, dst);
@@ -117,6 +128,7 @@ void ClockOptions::loadOptions() {
     EEPROM.get(4, fadeEffectsEnabled);
     EEPROM.get(5, daytimeBrightness);
     EEPROM.get(6, nightBrightness);
+    EEPROM.get(7, displayMode);
   }
   updatePremultipliedNightBrightness();
 }

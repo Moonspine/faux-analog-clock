@@ -5,77 +5,104 @@ FrameBufferView::FrameBufferView(uint8_t *frameBuffer, uint8_t count) {
   this->frameBuffer = frameBuffer;
   this->count = count;
 
+  microsecondsPerFadeTick = 0;
   targetFadeValue = 0;
-  fadeRate = 0;
-  fadeTickDelay = 0;
 
-  remainingFadeTickDelay = 0;
   isFadeActive = false;
+  lastFadeActive = false;
+  lastFadeTimestamp = 0;
 }
 
 void FrameBufferView::setValue(uint8_t index, uint8_t value) {
   if (index < count) {
     frameBuffer[index] = value;
-    isFadeActive = fadeRate > 0;
+    isFadeActive = microsecondsPerFadeTick > 0;
   }
 }
 
 void FrameBufferView::setAllValues(uint8_t value) {
   memset(frameBuffer, value, count);
-  isFadeActive = fadeRate > 0;
+  isFadeActive = microsecondsPerFadeTick > 0;
 }
 
-void FrameBufferView::initializeFade(uint8_t fadeRate, uint16_t fadeTickDelay, uint8_t targetFadeValue) {
-  this->fadeRate = fadeRate;
-  this->fadeTickDelay = fadeTickDelay;
+void FrameBufferView::setValuesBinaryDisplay(uint8_t bitValue, uint8_t bitCount, uint8_t valuesPerBit, bool setZeroes, uint8_t intensity) {
+  // Sanity checks
+  uint8_t realBitCount = min(max(bitCount, 1), 8);
+  uint8_t realValuesPerBit = min(max(valuesPerBit, 1), count / realBitCount);
+
+  // Set values
+  uint8_t remainingValue = bitValue;
+  uint8_t *target = frameBuffer;
+  for (uint8_t i = 0; i < realBitCount; ++i) {
+    bool isOne = (remainingValue & 1) > 0;
+
+    if (isOne || setZeroes) {
+      memset(target, isOne ? intensity : 0, realValuesPerBit);
+    }
+
+    target += realValuesPerBit;
+    remainingValue >>= 1;
+  }
+  
+  isFadeActive = microsecondsPerFadeTick > 0;
+}
+
+void FrameBufferView::initializeFade(uint32_t microsecondsPerFadeTick, uint8_t targetFadeValue) {
+  this->microsecondsPerFadeTick = microsecondsPerFadeTick;
   this->targetFadeValue = targetFadeValue;
   
-  remainingFadeTickDelay = fadeTickDelay;
-  isFadeActive = fadeRate > 0;
+  isFadeActive = microsecondsPerFadeTick > 0;
 }
 
-void FrameBufferView::initializeFade(uint8_t fadeRate, uint16_t fadeTickDelay) {
-  this->fadeRate = fadeRate;
-  this->fadeTickDelay = fadeTickDelay;
+void FrameBufferView::initializeFade(uint32_t microsecondsPerFadeTick) {
+  this->microsecondsPerFadeTick = microsecondsPerFadeTick;
   
-  remainingFadeTickDelay = fadeTickDelay;
-  isFadeActive = fadeRate > 0;
+  isFadeActive = microsecondsPerFadeTick > 0;
 }
 
 void FrameBufferView::setFadeTarget(uint8_t targetFadeValue) {
   this->targetFadeValue = targetFadeValue;
-  isFadeActive = fadeRate > 0;
+  isFadeActive = microsecondsPerFadeTick > 0;
 }
 
 void FrameBufferView::updateFade() {
   if (isFadeActive) {
-    if (remainingFadeTickDelay > 0) {
-      // Update tick delay
-      --remainingFadeTickDelay;
-    } else {
-      // Fade buffer
-      isFadeActive = false;
-      uint8_t *currentBuffer = frameBuffer;
-      for (uint8_t i = 0; i < count; ++i) {
-        uint8_t value = *currentBuffer;
-        if (value != targetFadeValue) {
-          if (value > targetFadeValue) {
-            // If value is greater than the target value, decrease it
-            *currentBuffer -= min(fadeRate, value - targetFadeValue);
-          } else {
-            // If value is less than the target value, increase it
-            *currentBuffer += min(fadeRate, targetFadeValue - value);
-          }
-          isFadeActive = true;
-        }
-        
-        ++currentBuffer;
-      }
+    uint32_t timestamp = micros();
+    bool firstFadeTick = !lastFadeActive;
 
-      // Set delay for the next fade tick
-      remainingFadeTickDelay = fadeTickDelay;
+    if (firstFadeTick) {
+      // If first fade tick, just grab a timestamp
+      firstFadeTick = false;
+      lastFadeTimestamp = timestamp;
+    } else {
+      // Compute fade rate and upadte timing
+      uint32_t fadeRateLong = (timestamp - lastFadeTimestamp) / microsecondsPerFadeTick;
+      lastFadeTimestamp += fadeRateLong * microsecondsPerFadeTick;
+
+      uint8_t fadeRate = static_cast<uint8_t>(min(fadeRateLong, 255));
+      if (fadeRate > 0) {
+        // Fade buffer
+        isFadeActive = false;
+        uint8_t *currentBuffer = frameBuffer;
+        for (uint8_t i = 0; i < count; ++i) {
+          uint8_t value = *currentBuffer;
+          if (value != targetFadeValue) {
+            if (value > targetFadeValue) {
+              // If value is greater than the target value, decrease it
+              *currentBuffer -= min(fadeRate, value - targetFadeValue);
+            } else {
+              // If value is less than the target value, increase it
+              *currentBuffer += min(fadeRate, targetFadeValue - value);
+            }
+            isFadeActive = true;
+          }
+          
+          ++currentBuffer;
+        }
+      }
     }
   }
+  lastFadeActive = isFadeActive;
 }
 
 void FrameBufferView::accelerateFadeToEnd() {

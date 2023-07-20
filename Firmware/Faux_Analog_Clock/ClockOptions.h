@@ -31,6 +31,12 @@ const uint8_t UTILITY_MODE_RESET_TIME = 1;
 const uint8_t UTILITY_MODE_LED_TEST_1 = 2;
 const uint8_t UTILITY_MODE_LED_TEST_2 = 3;
 
+/**
+ * Display mode values
+ */
+const uint8_t CLOCK_DISPLAY_MODE_ANALOG = 0;
+const uint8_t CLOCK_DISPLAY_MODE_BINARY = 1;
+
 
 /**
  * Class containing clock options, as well as handling saving/loading of options from EEPROM
@@ -71,6 +77,11 @@ public:
    * Sets the brightness of the clock LEDs during the night (6 PM to 6 AM)
    */
   void setNightBrightness(uint8_t value);
+
+  /**
+   * Sets the clock display mode (see CLOCK_DISPLAY_MODE_* for valid values)
+   */
+  void setDisplayMode(uint8_t mode);
 
   /**
    * Sets the current utility mode (see UTILITY_MODE_* for more info)
@@ -120,6 +131,11 @@ public:
   uint8_t getPremultipliedNightBrightness() const;
 
   /**
+   * Gets the clock display mode (see CLOCK_DISPLAY_MODE_* for valid values)
+   */
+  uint8_t getDisplayMode() const;
+
+  /**
    * Returns true if any options have changed since the last time this method was called
    */
   bool getOptionsChanged();
@@ -138,6 +154,7 @@ private:
   bool fadeEffectsEnabled;
   uint8_t daytimeBrightness;
   uint8_t nightBrightness;
+  uint8_t displayMode;
 
   uint8_t premultipliedNightBrightness;
   bool changed;

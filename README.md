@@ -22,6 +22,7 @@ If no buttons are pressed for MENU_TIMEOUT_MS milliseconds, the menu will close 
 - Fd (Fd) = Fade effects
 - br (br) = Brightness
 - nb (nb) = Night brightness (multiplied by brightness)
+- dY (d4) = Display mode
 - UT (U7) = Utilities
 
 
@@ -61,6 +62,13 @@ This menu controls overall clock LED brightness at night (from 6 PM to 6 AM) fro
 This value is multiplied by the overall clock brightness, making it effectively a scalar for clock brightness that's only applied at night.
 
 
+## Display mode menu
+
+This menu allows you to select between different clock face display modes.
+- "An" = Analog mode. This is the classic analog clock face, showing one LED for hours, one for minutes, and one for seconds.
+- "bn" = Binary mode. This mode displays H/M/S in binary. The LSb is at 12 o'clock, and the bits are displayed in clockwise order from there. The hours use 3 LEDs per bit (displaying a 4-bit number in total), and the minutes and seconds each use 10 LEDs per bit (displaying a 6-bit number).
+
+
 ## Utilities menu
 
 This menu includes some useful utilities for testing your clock build.
@@ -77,8 +85,7 @@ This menu includes some useful utilities for testing your clock build.
 At the top of `Firmware/Faux_Analog_Clock/Faux_Analog_Clock.ino`, you can find many constants defined which alter the behavior of the clock.
 
 You can change the fade animation rate by modifying variables in the "Animation timing variables" section.
-- CLOCK_ANIM_*_FADE_RATE       = The change in brightness on each fade tick.
-- CLOCK_ANIM_*_FADE_TICK_DELAY = The number of rendered frames which constitutes one fade tick.
+- CLOCK_ANIM_*_FADE_TIME = The number of microseconds between each time the LEDs fade by 1 unit of intensity (255 is the max LED intensity)
 
 Menu behavior can be configured as well:
 - MENU_TIMEOUT_MS                = The number of milliseconds until the menu auto-closes after the last button press.
