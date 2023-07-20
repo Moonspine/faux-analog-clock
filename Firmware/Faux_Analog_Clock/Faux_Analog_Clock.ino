@@ -200,8 +200,7 @@ void loop() {
       // If we previously had no time set (i.e. were playing the time set animation), snap the clock rings to whatever time they should be set for
       clockSetAnimationValue = 0;
       clockSetAnimationDirection = 1;
-      faceInnerRingBuffer->accelerateFadeToEnd();
-      faceOuterRingBuffer->accelerateFadeToEnd();
+      updateClockFaceEffectMode(brightness);
     }
   } else {
     // Animate the clock face to show that the time is being set
@@ -214,12 +213,39 @@ void loop() {
 
 /**
  * Updates the clock with any changed options
+ * 
+ * @param brightness The current brightness of the clock
  */
 void updateOptions(uint8_t brightness) {
   // Set timezone
   timekeeper.setTimeZone(options.getTimezone(), options.getDST());
 
   // Update clock face effect mode
+  updateClockFaceEffectMode(brightness);
+
+  // Handle utility modes
+  switch (options.getCurrentUtilityMode()) {
+    case UTILITY_MODE_RESET_TIME:
+      timekeeper.resetTime();
+      options.setCurrentUtilityMode(UTILITY_MODE_NONE);
+      break;
+    case UTILITY_MODE_LED_TEST_1:
+      runLedTest1();
+      break;
+    case UTILITY_MODE_LED_TEST_2:
+      runLedTest2();
+      break;
+    default:
+      break;
+  }
+}
+
+/**
+ * Updates the clock face frame buffers to reflect the current face effect mode
+ * 
+ * @param brightness The current brightness of the clock
+ */
+void updateClockFaceEffectMode(uint8_t brightness) {
   switch (options.getFaceEffects()) {
     case FACE_EFFECTS_OUTER:
       faceInnerRingBuffer->initializeFade(0, 0);
@@ -246,22 +272,6 @@ void updateOptions(uint8_t brightness) {
       updateClockRingFadeTargets(timekeeper.getTime().hour(), brightness);
       faceInnerRingBuffer->accelerateFadeToEnd();
       faceOuterRingBuffer->accelerateFadeToEnd();
-      break;
-  }
-
-  // Handle utility modes
-  switch (options.getCurrentUtilityMode()) {
-    case UTILITY_MODE_RESET_TIME:
-      timekeeper.resetTime();
-      options.setCurrentUtilityMode(UTILITY_MODE_NONE);
-      break;
-    case UTILITY_MODE_LED_TEST_1:
-      runLedTest1();
-      break;
-    case UTILITY_MODE_LED_TEST_2:
-      runLedTest2();
-      break;
-    default:
       break;
   }
 }

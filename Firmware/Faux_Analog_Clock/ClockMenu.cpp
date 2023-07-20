@@ -151,12 +151,14 @@ void ClockMenu::readButtons() {
     lastButtonCheckMillis = currentMillis;
 
     // Check for long press to back out of the menu
+    longPressingSelect = longPressingSelect && currentSelectButtonPressed;
     if (currentSelectButtonPressed && !lastSelectButtonPressed) {
       selectButtonDownMillis = currentMillis;
       longPressingSelect = true;
-    } else if (currentSelectButtonPressed && longPressingSelect && (currentMillis - selectButtonDownMillis >= backButtonLongPressLength)) {
+    } else if (longPressingSelect && (currentMillis - selectButtonDownMillis >= backButtonLongPressLength)) {
       if (currentSubMenuIndex > 0) {
         currentSubMenuIndex = 0;
+        timeoutCounter = menuTimeoutMilliseconds;
       } else {
         exitMenu();
       }
