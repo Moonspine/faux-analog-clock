@@ -137,7 +137,6 @@ FrameBufferView *ClockDisplay::newFrameBufferView(uint8_t startIndex, uint8_t co
 
 
 void ClockDisplay::timedWait(uint8_t timeFrame) {
-  // TODO: Tweak this
   // 15 ms scan at a delay length of 1 NOP
   // 18 ms scan at a delay length of 2 NOPs
   // 21 ms scan at a delay length of 3 NOPs
