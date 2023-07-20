@@ -1,17 +1,17 @@
-# faux-analog-clock
+# Faux Analog Clock
 An analog clock composed entirely of LEDs
 
-The build should be fairly self-explanatory. A KiCad 6 schematic and board layout are included in `Board\`
-Additionally, `Board\Faux Analog Clock Gerber.zip` is a ready-to-go Gerber plot of the board which can be sent directly to the PCB manufacturer of your choice.
+The build should be fairly self-explanatory. A KiCad 6 schematic and board layout are included in `Board\`  
+Additionally, `Board\Faux Analog Clock Gerber.zip` is a ready-to-go Gerber plot of the board which can be sent directly to the PCB manufacturer of your choice.  
 LED resistor values are mere suggetions, and you should experiment on a breadboard to see what works well with your chosen LEDs.
 
 
 # Using the menu
 
-Press "Select" or "Enter" to enter the menu.
-Subsequent presses of "Select" will advance to different menu options.
-Pressing "Enter" will choose a menu option (either changing a setting or opening a submenu.)
-Pressing and holding "Select" for the amount of time defined by MENU_BACK_BUTTON_LONG_PRESS_MS will return to the previous menu (or close the menu if at the top menu.)
+Press "Select" or "Enter" to enter the menu.  
+Subsequent presses of "Select" will advance to different menu options.  
+Pressing "Enter" will choose a menu option (either changing a setting or opening a submenu.)  
+Pressing and holding "Select" for the amount of time defined by MENU_BACK_BUTTON_LONG_PRESS_MS will return to the previous menu (or close the menu if at the top menu.)  
 If no buttons are pressed for MENU_TIMEOUT_MS milliseconds, the menu will close on its own.
 
 
@@ -27,7 +27,7 @@ If no buttons are pressed for MENU_TIMEOUT_MS milliseconds, the menu will close 
 
 ## Timezone menu
 
-In this menu, you can select the timezone offset of the clock, in whle hour increments.
+In this menu, you can select the timezone offset of the clock, in whle hour increments.  
 These values are displayed in hexadecimal (sorry, 7-segment displays) ranging from "-C" (-12 hours) to "E" (+14 hours)
 
 
@@ -57,7 +57,7 @@ This menu controls overall clock LED brightness from 1 (dimmest) to 10 (brightes
 
 ## Night Brightness menu
 
-This menu controls overall clock LED brightness at night (from 6 PM to 6 AM) from 1 (dimmest) to 10 (brightest).
+This menu controls overall clock LED brightness at night (from 6 PM to 6 AM) from 1 (dimmest) to 10 (brightest).  
 This value is multiplied by the overall clock brightness, making it effectively a scalar for clock brightness that's only applied at night.
 
 
