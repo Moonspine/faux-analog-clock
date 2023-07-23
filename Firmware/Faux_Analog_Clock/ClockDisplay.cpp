@@ -100,14 +100,14 @@ void ClockDisplay::display() {
     // Clear positive Charlieplex line
     posMask = ~posMask;
     if (pos < 8) {
-      DDRD &= posMask;
       PORTD &= posMask;
+      DDRD &= posMask;
     } else if (pos < 12) {
-      DDRB &= posMask;
       PORTB &= posMask;
+      DDRB &= posMask;
     } else {
-      DDRC &= posMask;
       PORTC &= posMask;
+      DDRC &= posMask;
     }
   }
 }
