@@ -36,6 +36,9 @@ const uint8_t UTILITY_MODE_LED_TEST_2 = 3;
  */
 const uint8_t CLOCK_DISPLAY_MODE_ANALOG = 0;
 const uint8_t CLOCK_DISPLAY_MODE_BINARY = 1;
+const uint8_t CLOCK_DISPLAY_MODE_FILL = 2;
+const uint8_t CLOCK_DISPLAY_MODE_FILL_UNFILL = 3;
+const uint8_t CLOCK_DISPLAY_MODE_INVERTED_ANALOG = 4;
 
 
 /**

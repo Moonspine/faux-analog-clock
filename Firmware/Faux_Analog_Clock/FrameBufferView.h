@@ -22,6 +22,15 @@ public:
   void setValue(uint8_t index, uint8_t value);
 
   /**
+   * Sets multiple values at once
+   * 
+   * @param startIndex The first index to set
+   * @param valueCount The number of values to set
+   * @param value The value to set
+   */
+  void setValues(uint8_t startIndex, uint8_t valueCount, uint8_t value);
+
+  /**
    * Sets all values in the frame buffer
    * 
    * @param value The new value

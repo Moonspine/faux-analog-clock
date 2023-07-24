@@ -20,6 +20,16 @@ void FrameBufferView::setValue(uint8_t index, uint8_t value) {
   }
 }
 
+void FrameBufferView::setValues(uint8_t startIndex, uint8_t valueCount, uint8_t value) {
+  if (startIndex < count) {
+    uint8_t realCount = min(count - startIndex, valueCount);
+    if (realCount > 0) {
+      memset(frameBuffer + startIndex, value, realCount);
+      isFadeActive = microsecondsPerFadeTick > 0;
+    }
+  }
+}
+
 void FrameBufferView::setAllValues(uint8_t value) {
   memset(frameBuffer, value, count);
   isFadeActive = microsecondsPerFadeTick > 0;

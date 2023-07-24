@@ -119,7 +119,7 @@ void ClockOptions::loadOptions() {
     faceEffects = FACE_EFFECTS_ON;
     fadeEffectsEnabled = true;
     daytimeBrightness = 255;
-    nightBrightness = 128;
+    nightBrightness = 255;
     displayMode = CLOCK_DISPLAY_MODE_ANALOG;
   } else {
     EEPROM.get(1, timezone);

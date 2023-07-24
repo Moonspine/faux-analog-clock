@@ -40,6 +40,9 @@
  * Display mode ("dY") menu:
  *   "An" = Analog display mode (classic analog clock face)
  *   "bn" = Binary display mode (H/M/S are displayed in binary, using 1/6, 1/6, and 1/4 of the clock face, respectively, in clockwise direction, starting with the LSb)
+ *   "F1" = Fill 1; Clock rings fill as H/M/S progresses, then clear at the end
+ *   "F2" = Fill 2; Clock rings fill as H/M/S progresses, then unfill on the next hour/minute/second
+ *   "In" = Inverted analog display mode (same as An, but LEDs are inverted)
  * 
  * Utilities ("UT") menu:
  *   "RS" = Reset time using GPS
@@ -59,7 +62,7 @@ const PROGMEM char CLOCK_SUBMENU_ITEM_TEXT_TIMEZONE[]     = "-C-b-A-9-8-7-6-5-4-
 const PROGMEM char CLOCK_SUBMENU_ITEM_TEXT_BOOLEAN[]      = " n Y";
 const PROGMEM char CLOCK_SUBMENU_ITEM_TEXT_FACE_EFFECTS[] = "onouinbo";
 const PROGMEM char CLOCK_SUBMENU_ITEM_TEXT_DECIMAL[]      = " 1 2 3 4 5 6 7 8 910";
-const PROGMEM char CLOCK_SUBMENU_ITEM_TEXT_DISPLAY_MODE[] = "Anbn";
+const PROGMEM char CLOCK_SUBMENU_ITEM_TEXT_DISPLAY_MODE[] = "AnbnF1F2In";
 const PROGMEM char CLOCK_SUBMENU_ITEM_TEXT_UTILITIES[]    = "RSL1L2";
 
 constexpr uint8_t CLOCK_SUBMENU_COUNT = strlen(CLOCK_SUBMENU_TEXT) / 2;

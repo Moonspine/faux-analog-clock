@@ -67,6 +67,9 @@ This value is multiplied by the overall clock brightness, making it effectively 
 This menu allows you to select between different clock face display modes.
 - "An" = Analog mode. This is the classic analog clock face, showing one LED for hours, one for minutes, and one for seconds.
 - "bn" = Binary mode. This mode displays H/M/S in binary. The LSb is at 12 o'clock, and the bits are displayed in clockwise order from there. The hours use 3 LEDs per bit (displaying a 4-bit number in total), and the minutes and seconds each use 10 LEDs per bit (displaying a 6-bit number).
+- "F1" = Fill mode 1. This mode fills the hour/minute/second rings as time progresses, clearing them at the turn of the minute/hour.
+- "F1" = Fill mode 2. This mode fills the hour/minute/second rings on even minutes/hours/AM (respectively), and empties the rings on odd mintes/hours/PM.
+- "In" = Inverted analog mode. This is the same as analog move, except that the LEDs are inverted.
 
 
 ## Utilities menu
@@ -94,9 +97,21 @@ Menu behavior can be configured as well:
 You can also change how often the GPS is used to set the RTC:
 - TIMEKEEPER_GPS_TIME_SET_INTERVAL_SECONDS = Seconds in between time resets.
 
+
+## ClockFace.h
+
+FACE_INNER_HOURLY_BRIGHTNESS and FACE_OUTER_HOURLY_BRIGHTNESS define the brightness of the inner and outer edge rings on a per-hour basis.  
+The first entry in each array is the brightness at midnight (hour 0), and the rest of the entires count up from them (1 AM, 2 AM, etc.)
+
+
+## Pendulum.h
+PENDULUM_LED_INDEX contains the LED indices of the pendulum for each individual millisecond following a second tick.  
+The default pattern is a sinusoidal pendulum pattern that starts in the center and swings right then left.
+
+
 ## Timekeeper.h
 
-Finally, in `Firmware/Faux_Analog_Clock/Timekeeper.h`, commenting out the following line will cause the timekeeper to use an internal millis()-based RTC rather than external RTC hardware:
+In `Firmware/Faux_Analog_Clock/Timekeeper.h`, commenting out the following line will cause the timekeeper to use an internal millis()-based RTC rather than external RTC hardware:
 ```
 #define USE_HARDWARE_RTC 1
 ```
