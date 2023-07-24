@@ -157,7 +157,7 @@ void loop() {
     if (timekeeper.isTimeSetPending()) {
       // If we're actively setting the time, play the time set animation
       updateTimeSetAnimation();
-    } else if (!wasTimeSetPendingLastIteration) {
+    } else if (wasTimeSetPendingLastIteration) {
       // If we previously had no time set (i.e. were playing the time set animation), snap the clock rings to whatever time they should be set for
       clockSetAnimationValue = 0;
       clockSetAnimationDirection = 1;
