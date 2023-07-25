@@ -120,6 +120,8 @@ void ClockMenu::begin() {
   lastEnterButtonPressed = false;
   currentSelectButtonPressed = false;
   currentEnterButtonPressed = false;
+
+  firstRead = true;
   lastButtonCheckMillis = 0;
 }
 
@@ -149,6 +151,14 @@ const char *ClockMenu::getMenuText() const {
   return menuTextBuffer;
 }
 
+bool ClockMenu::isSelectPressed() const {
+  return currentSelectButtonPressed;
+}
+
+bool ClockMenu::isEnterPressed() const {
+  return currentEnterButtonPressed;
+}
+
 
 void ClockMenu::readButtons() {
   lastSelectButtonPressed = currentSelectButtonPressed;
@@ -156,7 +166,7 @@ void ClockMenu::readButtons() {
   
   uint32_t currentMillis = millis();
   uint32_t intervalMillis = currentMillis - lastButtonCheckMillis;
-  if (intervalMillis >= DEBOUNCE_INTERVAL) {
+  if (firstRead || (intervalMillis >= DEBOUNCE_INTERVAL)) {
     currentSelectButtonPressed = (PINB & selectButtonMask) == 0;
     currentEnterButtonPressed = (PINB & enterButtonMask) == 0;
     lastButtonCheckMillis = currentMillis;
@@ -186,6 +196,8 @@ void ClockMenu::readButtons() {
     } else {
       timeoutCounter -= min(timeoutCounter, intervalMillis);
     }
+
+    firstRead = false;
   }
 }
 

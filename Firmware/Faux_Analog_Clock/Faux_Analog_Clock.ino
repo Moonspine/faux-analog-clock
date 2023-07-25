@@ -76,13 +76,18 @@ void setup() {
   // Start the clock display
   clockDisplay.begin();
 
-  // Uncomment this block to do an LED test (useful while building the board)
-  /*
-  clockDisplay.setAllLEDValues(255);
-  while (true) {
-    clockDisplay.display();
+  // Start the menu
+  menu.begin();
+
+  // Check for debug display requests (holding Select or Enter on startup)
+  menu.update();
+  if (menu.isSelectPressed()) {
+    options.setCurrentUtilityMode(UTILITY_MODE_LED_TEST_1);
+    executeUtilityMode();
+  } else if (menu.isEnterPressed()) {
+    options.setCurrentUtilityMode(UTILITY_MODE_LED_TEST_2);
+    executeUtilityMode();
   }
-  */
 
   // Do LED fade test
   runLEDFadeTest();
@@ -102,9 +107,6 @@ void setup() {
   // Start the timekeeper
   timekeeper.begin();
   timekeeper.setTimeZone(options.getTimezone(), options.getDST());
-
-  // Start the menu
-  menu.begin();
 }
 
 // Main loop
@@ -207,6 +209,13 @@ void updateOptions(uint8_t brightness) {
   displayMode->initialize(clockFrameBuffers, brightness);
 
   // Handle utility modes
+  executeUtilityMode();
+}
+
+/**
+ * Handle the currently selected utility mode (if any)
+ */
+void executeUtilityMode() {
   switch (options.getCurrentUtilityMode()) {
     case UTILITY_MODE_RESET_TIME:
       timekeeper.resetTime();

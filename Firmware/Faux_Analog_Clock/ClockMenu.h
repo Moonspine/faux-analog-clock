@@ -38,6 +38,16 @@ public:
    * Gets the display text of the current menu item
    */
   const char *getMenuText() const;
+
+  /**
+   * Returns whether the "Select" button is currently being pressed
+   */
+  bool isSelectPressed() const;
+
+  /**
+   * Returns whether the "Enter" button is currently being pressed
+   */
+  bool isEnterPressed() const;
   
 private:
   ClockOptions &options;
@@ -53,6 +63,8 @@ private:
   bool currentSelectButtonPressed;
   bool currentEnterButtonPressed;
   bool longPressingSelect;
+
+  bool firstRead;
   uint32_t lastButtonCheckMillis;
   uint32_t selectButtonDownMillis;
   uint32_t timeoutCounter;

@@ -1,9 +1,23 @@
 # Faux Analog Clock
+
 An analog clock composed entirely of LEDs
 
 The build should be fairly self-explanatory. A KiCad 6 schematic and board layout are included in `Board\`  
 Additionally, `Board\Faux Analog Clock Gerber.zip` is a ready-to-go Gerber plot of the board which can be sent directly to the PCB manufacturer of your choice.  
 LED resistor values are mere suggetions, and you should experiment on a breadboard to see what works well with your chosen LEDs.
+
+
+# Debugging the build
+
+In order to facilitate easier debugging during the build process, two LED tests are easily accessible on startup.  
+
+If you press and hold "Select" as you turn the clock on, it will boot in "LED test 1" mode.  
+This mode displays all LEDs at full brightness to help track down bad solder joints, backwards diodes, etc.  
+This test mode is accessible via the utilities menu after startup. Press any key to resume the normal boot sequence.  
+
+If you press and hold "Enter" as you turn the clock on, it will boot in "LED test 2" mode.  
+This mode displays each LED in sequence. This is useful for tracking down solder bridges and confirming proper clock operation.  
+This test mode is also accessible via the utilities menu after startup. Press any key to resume the normal boot sequence.  
 
 
 # Using the menu
