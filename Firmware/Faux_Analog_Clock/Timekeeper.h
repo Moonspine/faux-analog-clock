@@ -79,6 +79,7 @@ private:
   int8_t pendingTimezoneAdjustment;
   bool pendingTimeReset;
   DateTime lastTime;
+  bool lastTimeValid;
 
   uint32_t lastSetTime;
 

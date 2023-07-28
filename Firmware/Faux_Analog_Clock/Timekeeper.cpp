@@ -4,6 +4,7 @@
 
 Timekeeper::Timekeeper(uint8_t gpsTX, uint8_t gpsRX, uint32_t timeSetIntervalSeconds) : gpsSerial(gpsTX, gpsRX), gps(&gpsSerial) {
   this->timeSetIntervalSeconds = timeSetIntervalSeconds;
+  lastTimeValid = false;
 }
 
 void Timekeeper::begin() {
@@ -33,7 +34,7 @@ void Timekeeper::begin() {
 
 void Timekeeper::update() {
   // Set the clock the time is invalid or it's been awhile since the last set
-  pendingTimeReset = pendingTimeReset || lastSetTime == 0 || (lastTime.unixtime() - lastSetTime >= timeSetIntervalSeconds);
+  pendingTimeReset = pendingTimeReset || !isTimeValid() || (lastTime.unixtime() - lastSetTime >= timeSetIntervalSeconds);
   if (pendingTimeReset) {
     setClockTime();
   }
@@ -57,11 +58,13 @@ void Timekeeper::update() {
     }
   }
   currentMillis = nowMillis;
+
+  lastTimeValid = lastTime.isValid();
 }
 
 
 bool Timekeeper::isTimeValid() const {
-  return lastSetTime > 0;
+  return (lastSetTime > 0) && lastTimeValid;
 }
 
 const DateTime &Timekeeper::getTime() const {
@@ -107,6 +110,7 @@ void Timekeeper::setClockTime() {
       lastTime = DateTime(gps.year, gps.month, gps.day, gps.hour, gps.minute, gps.seconds) + timezoneOffset;
       rtc.adjust(lastTime);
       pendingTimezoneAdjustment = 0;
+      lastTimeValid = lastTime.isValid();
 
       lastSetTime = lastTime.unixtime();
       pendingTimeReset = false;
