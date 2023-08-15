@@ -17,12 +17,12 @@ void Timekeeper::begin() {
 
   // Init GPS
   gps.begin(9600);
-  gps.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
-  gps.sendCommand(PMTK_SET_NMEA_UPDATE_100_MILLIHERTZ);
+  setupGPS(false);
 
   // Init milliseconds
   lastMillis = currentMillis = millis();
   lastSetTime = 0;
+  lastSetAttemptMillis = 0;
 
   // Init timezone
   timezone = -6;
@@ -100,26 +100,44 @@ void Timekeeper::setClockTime() {
   // Read the GPS
   if (!gpsSerial.isListening()) {
     gpsSerial.listen();
+    setupGPS(false);
+    lastSetAttemptMillis = lastMillis;
   }
   readGPS();
 
   // Set the time
   if (gps.newNMEAreceived()) {
-    if (gps.parse(gps.lastNMEA()) && gps.fix && gps.year > 0) {
-      TimeSpan timezoneOffset(0, timezone + (dst ? 1 : 0), 0, 0);
-      lastTime = DateTime(gps.year, gps.month, gps.day, gps.hour, gps.minute, gps.seconds) + timezoneOffset;
-      rtc.adjust(lastTime);
-      pendingTimezoneAdjustment = 0;
-      lastTimeValid = lastTime.isValid();
-
-      lastSetTime = lastTime.unixtime();
-      pendingTimeReset = false;
-
-      // Stop the GPS serial port from listening.
-      // I wish there were a better way than this, but SoftwareSerial does not provide an end() method.
-      SoftwareSerial dummySerial(0, 0);
-      dummySerial.begin(1200);
-      dummySerial.listen();
+    if (gps.parse(gps.lastNMEA())) {
+      if (gps.fix && gps.year > 0) {
+        TimeSpan timezoneOffset(0, timezone + (dst ? 1 : 0), 0, 0);
+        lastTime = DateTime(gps.year, gps.month, gps.day, gps.hour, gps.minute, gps.seconds) + timezoneOffset;
+        rtc.adjust(lastTime);
+        pendingTimezoneAdjustment = 0;
+        lastTimeValid = lastTime.isValid();
+  
+        lastSetTime = lastTime.unixtime();
+        pendingTimeReset = false;
+  
+        // Stop the GPS serial port from listening.
+        // I wish there were a better way than this, but SoftwareSerial does not provide an end() method.
+        SoftwareSerial dummySerial(0, 0);
+        dummySerial.begin(1200);
+        dummySerial.listen();
+      } else if (lastMillis - lastSetAttemptMillis > GPS_RESET_TIMEOUT_MS) {
+        setupGPS(true);
+        lastSetAttemptMillis = lastMillis;
+      }
     }
   }
+}
+
+void Timekeeper::setupGPS(bool forceReset) {
+  if (forceReset) {
+    gps.sendCommand("$PMTK104*37\r\n");
+    delay(500);
+    readGPS();
+    delay(500);
+  }
+  gps.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
+  gps.sendCommand(PMTK_SET_NMEA_UPDATE_100_MILLIHERTZ);
 }

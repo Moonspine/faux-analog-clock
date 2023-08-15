@@ -8,6 +8,9 @@
 // Comment this out to use the software RTC
 #define USE_HARDWARE_RTC 1
 
+// The number of milliseconds of failed time setting after which the GPS will be forcibly reset
+#define GPS_RESET_TIMEOUT_MS 900000
+
 class Timekeeper {
 public:
   /**
@@ -82,6 +85,7 @@ private:
   bool lastTimeValid;
 
   uint32_t lastSetTime;
+  uint32_t lastSetAttemptMillis;
 
 
   /**
@@ -93,6 +97,13 @@ private:
    * Sets the current clock time by GPS
    */
   void setClockTime();
+
+  /**
+   * Sets the GPS options
+   * 
+   * @param forceReset If true, the GPS will be reset
+   */
+  void setupGPS(bool forceReset);
 };
 
 #endif

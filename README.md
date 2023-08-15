@@ -129,3 +129,9 @@ In `Firmware/Faux_Analog_Clock/Timekeeper.h`, commenting out the following line 
 ```
 #define USE_HARDWARE_RTC 1
 ```
+
+You can also modify the amount of time that the timekeeper will attempt to get a fix before forcibly resetting the GPS (the default is 15 minutes):
+```
+#define GPS_RESET_TIMEOUT_MS 900000
+```
+
