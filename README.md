@@ -4,7 +4,7 @@ An analog clock composed entirely of LEDs
 
 The build should be fairly self-explanatory. A KiCad 6 schematic and board layout are included in `Board\`  
 Additionally, `Board\Faux Analog Clock Gerber.zip` is a ready-to-go Gerber plot of the board which can be sent directly to the PCB manufacturer of your choice.  
-LED resistor values are mere suggetions, and you should experiment on a breadboard to see what works well with your chosen LEDs.
+LED resistor values are mere suggestions, and you should experiment on a breadboard to see what works well with your chosen LEDs.
 
 
 # Debugging the build
@@ -42,7 +42,7 @@ If no buttons are pressed for MENU_TIMEOUT_MS milliseconds, the menu will close 
 
 ## Timezone menu
 
-In this menu, you can select the timezone offset of the clock, in whle hour increments.  
+In this menu, you can select the timezone offset of the clock, in whole hour increments.  
 These values are displayed in hexadecimal (sorry, 7-segment displays) ranging from "-C" (-12 hours) to "E" (+14 hours)
 
 
@@ -82,7 +82,7 @@ This menu allows you to select between different clock face display modes.
 - "An" = Analog mode. This is the classic analog clock face, showing one LED for hours, one for minutes, and one for seconds.
 - "bn" = Binary mode. This mode displays H/M/S in binary. The LSb is at 12 o'clock, and the bits are displayed in clockwise order from there. The hours use 3 LEDs per bit (displaying a 4-bit number in total), and the minutes and seconds each use 10 LEDs per bit (displaying a 6-bit number).
 - "F1" = Fill mode 1. This mode fills the hour/minute/second rings as time progresses, clearing them at the turn of the minute/hour.
-- "F1" = Fill mode 2. This mode fills the hour/minute/second rings on even minutes/hours/AM (respectively), and empties the rings on odd mintes/hours/PM.
+- "F2" = Fill mode 2. This mode fills the hour/minute/second rings on even minutes/hours/AM (respectively), and empties the rings on odd mintes/hours/PM.
 - "In" = Inverted analog mode. This is the same as analog move, except that the LEDs are inverted.
 
 
@@ -115,7 +115,7 @@ You can also change how often the GPS is used to set the RTC:
 ## ClockFace.h
 
 FACE_INNER_HOURLY_BRIGHTNESS and FACE_OUTER_HOURLY_BRIGHTNESS define the brightness of the inner and outer edge rings on a per-hour basis.  
-The first entry in each array is the brightness at midnight (hour 0), and the rest of the entires count up from them (1 AM, 2 AM, etc.)
+The first entry in each array is the brightness at midnight (hour 0), and the rest of the entries count up from there (1 AM, 2 AM, etc.)
 
 
 ## Pendulum.h
