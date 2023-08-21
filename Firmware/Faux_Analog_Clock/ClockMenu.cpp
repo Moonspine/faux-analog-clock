@@ -15,6 +15,7 @@
  *   "nb" = Night brightness (multiplied by brightness)
  *   "dY" = Display mode
  *   "UT" = Utilities
+ *   "Pd" = Pendulum period
  *   
  * Timezone ("Tz") menu:
  *   Hexadecimal hour offset from GMT, ranging from "-C" (-12) to " E" (+14)
@@ -43,6 +44,10 @@
  *   "F1" = Fill 1; Clock rings fill as H/M/S progresses, then clear at the end
  *   "F2" = Fill 2; Clock rings fill as H/M/S progresses, then unfill on the next hour/minute/second
  *   "In" = Inverted analog display mode (same as An, but LEDs are inverted)
+ *   
+ * Pendulum period ("Pd") menu:
+ *   "FA" = Fast (1 second period)
+ *   "SL" = Slow (2 second period)
  * 
  * Utilities ("UT") menu:
  *   "RS" = Reset time using GPS
@@ -54,27 +59,29 @@
  *  This is ugly, but please bear with me. 
  *  These strings are pairs of ASCII characters to be displayed on the 7-segment displays. 
  *  The length of these strings must be twice the length of each sub-menu (i.e. one character for each digit for each menu item). 
- *  Indices (MSNybble):                                      0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1
- *  Indices (LSNybble):                                      0 1 2 3 4 5 6 7 8 9 A B C D E F 0 1 2 3 4 5 6 7 8 9 A
+ *  Indices (MSNybble):                                         0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1
+ *  Indices (LSNybble):                                         0 1 2 3 4 5 6 7 8 9 A B C D E F 0 1 2 3 4 5 6 7 8 9 A
  */
-const PROGMEM char CLOCK_SUBMENU_TEXT[]                   = "TZdSFEFdbrnbdYUT";
-const PROGMEM char CLOCK_SUBMENU_ITEM_TEXT_TIMEZONE[]     = "-C-b-A-9-8-7-6-5-4-3-2-1 0 1 2 3 4 5 6 7 8 9 A b C d E";
-const PROGMEM char CLOCK_SUBMENU_ITEM_TEXT_BOOLEAN[]      = " n Y";
-const PROGMEM char CLOCK_SUBMENU_ITEM_TEXT_FACE_EFFECTS[] = "onouinbo";
-const PROGMEM char CLOCK_SUBMENU_ITEM_TEXT_DECIMAL[]      = " 1 2 3 4 5 6 7 8 910";
-const PROGMEM char CLOCK_SUBMENU_ITEM_TEXT_DISPLAY_MODE[] = "AnbnF1F2In";
-const PROGMEM char CLOCK_SUBMENU_ITEM_TEXT_UTILITIES[]    = "RSL1L2";
+const PROGMEM char CLOCK_SUBMENU_TEXT[]                      = "TZdSFEFdbrnbdYPdUT";
+const PROGMEM char CLOCK_SUBMENU_ITEM_TEXT_TIMEZONE[]        = "-C-b-A-9-8-7-6-5-4-3-2-1 0 1 2 3 4 5 6 7 8 9 A b C d E";
+const PROGMEM char CLOCK_SUBMENU_ITEM_TEXT_BOOLEAN[]         = " n Y";
+const PROGMEM char CLOCK_SUBMENU_ITEM_TEXT_FACE_EFFECTS[]    = "onouinbo";
+const PROGMEM char CLOCK_SUBMENU_ITEM_TEXT_DECIMAL[]         = " 1 2 3 4 5 6 7 8 910";
+const PROGMEM char CLOCK_SUBMENU_ITEM_TEXT_DISPLAY_MODE[]    = "AnbnF1F2In";
+const PROGMEM char CLOCK_SUBMENU_ITEM_TEXT_PENDULUM_PERIOD[] = "FASL";
+const PROGMEM char CLOCK_SUBMENU_ITEM_TEXT_UTILITIES[]       = "RSL1L2";
 
 constexpr uint8_t CLOCK_SUBMENU_COUNT = strlen(CLOCK_SUBMENU_TEXT) / 2;
 constexpr uint8_t CLOCK_SUBMENU_LENGTH[CLOCK_SUBMENU_COUNT] = {
-  strlen(CLOCK_SUBMENU_ITEM_TEXT_TIMEZONE) / 2,     // Timezone
-  strlen(CLOCK_SUBMENU_ITEM_TEXT_BOOLEAN) / 2,      // DST
-  strlen(CLOCK_SUBMENU_ITEM_TEXT_FACE_EFFECTS) / 2, // Face Effects
-  strlen(CLOCK_SUBMENU_ITEM_TEXT_BOOLEAN) / 2,      // Fade Effects
-  strlen(CLOCK_SUBMENU_ITEM_TEXT_DECIMAL) / 2,      // Brightness
-  strlen(CLOCK_SUBMENU_ITEM_TEXT_DECIMAL) / 2,      // Night Brightness
-  strlen(CLOCK_SUBMENU_ITEM_TEXT_DISPLAY_MODE) / 2, // Display mode
-  strlen(CLOCK_SUBMENU_ITEM_TEXT_UTILITIES) / 2     // Utilities
+  strlen(CLOCK_SUBMENU_ITEM_TEXT_TIMEZONE) / 2,        // Timezone
+  strlen(CLOCK_SUBMENU_ITEM_TEXT_BOOLEAN) / 2,         // DST
+  strlen(CLOCK_SUBMENU_ITEM_TEXT_FACE_EFFECTS) / 2,    // Face Effects
+  strlen(CLOCK_SUBMENU_ITEM_TEXT_BOOLEAN) / 2,         // Fade Effects
+  strlen(CLOCK_SUBMENU_ITEM_TEXT_DECIMAL) / 2,         // Brightness
+  strlen(CLOCK_SUBMENU_ITEM_TEXT_DECIMAL) / 2,         // Night Brightness
+  strlen(CLOCK_SUBMENU_ITEM_TEXT_DISPLAY_MODE) / 2,    // Display mode
+  strlen(CLOCK_SUBMENU_ITEM_TEXT_PENDULUM_PERIOD) / 2, // Pendulum period
+  strlen(CLOCK_SUBMENU_ITEM_TEXT_UTILITIES) / 2        // Utilities
 };
 
 const char * const CLOCK_SUBMENU_ITEM_TEXT[CLOCK_SUBMENU_COUNT] = {
@@ -85,6 +92,7 @@ const char * const CLOCK_SUBMENU_ITEM_TEXT[CLOCK_SUBMENU_COUNT] = {
   CLOCK_SUBMENU_ITEM_TEXT_DECIMAL,
   CLOCK_SUBMENU_ITEM_TEXT_DECIMAL,
   CLOCK_SUBMENU_ITEM_TEXT_DISPLAY_MODE,
+  CLOCK_SUBMENU_ITEM_TEXT_PENDULUM_PERIOD,
   CLOCK_SUBMENU_ITEM_TEXT_UTILITIES
 };
 
@@ -259,7 +267,10 @@ void ClockMenu::handleEnterButtonPress() {
       case 7: // Display mode
         currentSubMenuIndex = options.getDisplayMode() + 1;
         break;
-      case 8: // Utilities
+      case 8: // Pendulum period
+        currentSubMenuIndex = options.getPendulumPeriod();
+        break;
+      case 9: // Utilities
         currentSubMenuIndex = 1;
       default: // Invalid option
         break;
@@ -288,7 +299,10 @@ void ClockMenu::handleEnterButtonPress() {
       case 7: // Display mode
         options.setDisplayMode(currentSubMenuIndex - 1);
         break;
-      case 8: // Utilities
+      case 8:
+        options.setPendulumPeriod(currentSubMenuIndex);
+        break;
+      case 9: // Utilities
         options.setCurrentUtilityMode(currentSubMenuIndex);
         break;
       default: // Invalid option

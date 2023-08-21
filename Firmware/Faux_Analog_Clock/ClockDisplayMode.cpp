@@ -11,22 +11,22 @@ void ClockDisplayMode::initialize(ClockFrameBuffers &frameBuffers, uint8_t brigh
   frameBuffers.getHourBuffer()->setFadeTarget(0);
 }
 
-void ClockDisplayMode::update(ClockFrameBuffers &frameBuffers, const DateTime &now, const uint16_t milliseconds, uint8_t brightness) {
+void ClockDisplayMode::update(ClockFrameBuffers &frameBuffers, const DateTime &now, const uint16_t pendulumIndex, uint8_t brightness) {
   // The base class only handle pendulum updates (this feature is identical for most implementations)
-  frameBuffers.getPendulumBuffer()->setValue(pgm_read_byte(PENDULUM_LED_INDEX + milliseconds), brightness);
+  frameBuffers.getPendulumBuffer()->setValue(pgm_read_byte(PENDULUM_LED_INDEX + pendulumIndex), brightness);
 }
 
 
-void AnalogClockDisplayMode::update(ClockFrameBuffers &frameBuffers, const DateTime &now, const uint16_t milliseconds, uint8_t brightness) {
-  ClockDisplayMode::update(frameBuffers, now, milliseconds, brightness);
+void AnalogClockDisplayMode::update(ClockFrameBuffers &frameBuffers, const DateTime &now, const uint16_t pendulumIndex, uint8_t brightness) {
+  ClockDisplayMode::update(frameBuffers, now, pendulumIndex, brightness);
   frameBuffers.getSecondBuffer()->setValue(now.second(), brightness);
   frameBuffers.getMinuteBuffer()->setValue(now.minute(), brightness);
   frameBuffers.getHourBuffer()->setValue(now.hour() % 12, brightness);
 }
 
 
-void BinaryClockDisplayMode::update(ClockFrameBuffers &frameBuffers, const DateTime &now, const uint16_t milliseconds, uint8_t brightness) {
-  ClockDisplayMode::update(frameBuffers, now, milliseconds, brightness);
+void BinaryClockDisplayMode::update(ClockFrameBuffers &frameBuffers, const DateTime &now, const uint16_t pendulumIndex, uint8_t brightness) {
+  ClockDisplayMode::update(frameBuffers, now, pendulumIndex, brightness);
   frameBuffers.getSecondBuffer()->setValuesBinaryDisplay(now.second(), 6, 10, false, brightness);
   frameBuffers.getMinuteBuffer()->setValuesBinaryDisplay(now.minute(), 6, 10, false, brightness);
   frameBuffers.getHourBuffer()->setValuesBinaryDisplay(now.hour() % 12, 4, 3, false, brightness);
@@ -39,8 +39,8 @@ void InvertedAnalogClockDisplayMode::initialize(ClockFrameBuffers &frameBuffers,
   frameBuffers.getHourBuffer()->setFadeTarget(brightness);
 }
 
-void InvertedAnalogClockDisplayMode::update(ClockFrameBuffers &frameBuffers, const DateTime &now, const uint16_t milliseconds, uint8_t brightness) {
-  frameBuffers.getPendulumBuffer()->setValue(pgm_read_byte(PENDULUM_LED_INDEX + milliseconds), 0);
+void InvertedAnalogClockDisplayMode::update(ClockFrameBuffers &frameBuffers, const DateTime &now, const uint16_t pendulumIndex, uint8_t brightness) {
+  frameBuffers.getPendulumBuffer()->setValue(pgm_read_byte(PENDULUM_LED_INDEX + pendulumIndex), 0);
   frameBuffers.getSecondBuffer()->setValue(now.second(), 0);
   frameBuffers.getMinuteBuffer()->setValue(now.minute(), 0);
   frameBuffers.getHourBuffer()->setValue(now.hour() % 12, 0);
@@ -78,15 +78,15 @@ inline void drawUnfilledLine(FrameBufferView *frameBuffer, uint8_t ringValue, ui
   }
 }
 
-void FillClockDisplayMode::update(ClockFrameBuffers &frameBuffers, const DateTime &now, const uint16_t milliseconds, uint8_t brightness) {
-  ClockDisplayMode::update(frameBuffers, now, milliseconds, brightness);
+void FillClockDisplayMode::update(ClockFrameBuffers &frameBuffers, const DateTime &now, const uint16_t pendulumIndex, uint8_t brightness) {
+  ClockDisplayMode::update(frameBuffers, now, pendulumIndex, brightness);
   drawFilledLine(frameBuffers.getSecondBuffer(), now.second(), brightness);
   drawFilledLine(frameBuffers.getMinuteBuffer(), now.minute(), brightness);
   drawFilledLine(frameBuffers.getHourBuffer(), now.hour() % 12, brightness);
 }
 
-void FillUnfillClockDisplayMode::update(ClockFrameBuffers &frameBuffers, const DateTime &now, const uint16_t milliseconds, uint8_t brightness) {
-  ClockDisplayMode::update(frameBuffers, now, milliseconds, brightness);
+void FillUnfillClockDisplayMode::update(ClockFrameBuffers &frameBuffers, const DateTime &now, const uint16_t pendulumIndex, uint8_t brightness) {
+  ClockDisplayMode::update(frameBuffers, now, pendulumIndex, brightness);
 
   if (now.minute() % 2 == 0) {
     drawFilledLine(frameBuffers.getSecondBuffer(), now.second(), brightness);

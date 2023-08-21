@@ -133,8 +133,13 @@ void loop() {
       clockFrameBuffers.accelerateFadeToEnd();
     }
 
+    // Compute pendulum index
+    uint16_t milliseconds = timekeeper.getMilliseconds();
+    uint16_t pendulumOffset = ((now.second() % options.getPendulumPeriod()) * static_cast<uint16_t>(1000)) / options.getPendulumPeriod();
+    uint16_t pendulumIndex = pendulumOffset + milliseconds / options.getPendulumPeriod();
+
     // Update time display
-    displayMode->update(clockFrameBuffers, now, timekeeper.getMilliseconds(), brightness);
+    displayMode->update(clockFrameBuffers, now, pendulumIndex, brightness);
 
     // Update clock ring animation fade targets
     updateClockRingFadeTargets(now.hour(), brightness);

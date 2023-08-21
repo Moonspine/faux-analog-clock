@@ -37,6 +37,7 @@ If no buttons are pressed for MENU_TIMEOUT_MS milliseconds, the menu will close 
 - br (br) = Brightness
 - nb (nb) = Night brightness (multiplied by brightness)
 - dY (d4) = Display mode
+- Pd (Pd) = Pendulum period
 - UT (U7) = Utilities
 
 
@@ -84,6 +85,13 @@ This menu allows you to select between different clock face display modes.
 - "F1" = Fill mode 1. This mode fills the hour/minute/second rings as time progresses, clearing them at the turn of the minute/hour.
 - "F2" = Fill mode 2. This mode fills the hour/minute/second rings on even minutes/hours/AM (respectively), and empties the rings on odd mintes/hours/PM.
 - "In" = Inverted analog mode. This is the same as analog move, except that the LEDs are inverted.
+
+
+## Pendulum period menu
+
+This menu allows you to set the period of the pendulum.
+- "FA" = Fast (1 second)
+- "SL" = Slow (2 seconds)
 
 
 ## Utilities menu

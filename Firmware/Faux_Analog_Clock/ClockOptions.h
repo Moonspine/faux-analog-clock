@@ -87,6 +87,11 @@ public:
   void setDisplayMode(uint8_t mode);
 
   /**
+   * Sets the number of seconds required for one pendulum period
+   */
+  void setPendulumPeriod(uint8_t numSeconds);
+
+  /**
    * Sets the current utility mode (see UTILITY_MODE_* for more info)
    */
   void setCurrentUtilityMode(uint8_t mode);
@@ -139,6 +144,11 @@ public:
   uint8_t getDisplayMode() const;
 
   /**
+   * Gets the number of seconds required for one pendulum period
+   */
+  uint8_t getPendulumPeriod() const;
+
+  /**
    * Returns true if any options have changed since the last time this method was called
    */
   bool getOptionsChanged();
@@ -158,6 +168,7 @@ private:
   uint8_t daytimeBrightness;
   uint8_t nightBrightness;
   uint8_t displayMode;
+  uint8_t pendulumPeriod;
 
   uint8_t premultipliedNightBrightness;
   bool changed;

@@ -18,7 +18,7 @@ public:
   /**
    * Updates the display mode with the current time
    */
-  virtual void update(ClockFrameBuffers &frameBuffers, const DateTime &now, const uint16_t milliseconds, uint8_t brightness);
+  virtual void update(ClockFrameBuffers &frameBuffers, const DateTime &now, const uint16_t pendulumIndex, uint8_t brightness);
 };
 
 /**

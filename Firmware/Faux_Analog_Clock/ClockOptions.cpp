@@ -47,6 +47,10 @@ void ClockOptions::setDisplayMode(uint8_t mode) {
   changed = true;
 }
 
+void ClockOptions::setPendulumPeriod(uint8_t numSeconds) {
+  this->pendulumPeriod = max(numSeconds, 1);
+}
+
 void ClockOptions::setCurrentUtilityMode(uint8_t mode) {
   this->currentUtilityMode = mode;
   changed = true;
@@ -89,6 +93,10 @@ uint8_t ClockOptions::getDisplayMode() const {
   return displayMode;
 }
 
+uint8_t ClockOptions::getPendulumPeriod() const {
+  return pendulumPeriod;
+}
+
 bool ClockOptions::getOptionsChanged() {
   bool result = changed;
   changed = false;
@@ -105,6 +113,7 @@ void ClockOptions::saveOptions() {
   EEPROM.put(5, daytimeBrightness);
   EEPROM.put(6, nightBrightness);
   EEPROM.put(7, displayMode);
+  EEPROM.put(8, pendulumPeriod);
 }
 
 
@@ -121,6 +130,7 @@ void ClockOptions::loadOptions() {
     daytimeBrightness = 255;
     nightBrightness = 255;
     displayMode = CLOCK_DISPLAY_MODE_ANALOG;
+    pendulumPeriod = 1;
   } else {
     EEPROM.get(1, timezone);
     EEPROM.get(2, dst);
@@ -129,6 +139,7 @@ void ClockOptions::loadOptions() {
     EEPROM.get(5, daytimeBrightness);
     EEPROM.get(6, nightBrightness);
     EEPROM.get(7, displayMode);
+    EEPROM.get(8, pendulumPeriod);
   }
   updatePremultipliedNightBrightness();
 }
