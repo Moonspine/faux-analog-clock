@@ -4,7 +4,11 @@ An analog clock composed entirely of LEDs
 
 The build should be fairly self-explanatory. A KiCad 6 schematic and board layout are included in `Board\`  
 Additionally, `Board\Faux Analog Clock Gerber.zip` is a ready-to-go Gerber plot of the board which can be sent directly to the PCB manufacturer of your choice.  
-LED resistor values are mere suggestions, and you should experiment on a breadboard to see what works well with your chosen LEDs.
+LED resistor values are mere suggestions, and you should experiment on a breadboard to see what works well with your chosen LEDs.  
+
+The following photos show the clock operating with its "Fill 2" (F2) display mode active:  
+<img src="Images/Dark.jpg" style="width: 320px" />
+<img src="Images/Light.jpg" style="width: 320px" />
 
 
 # Debugging the build
